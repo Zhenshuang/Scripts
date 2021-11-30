@@ -1,1 +1,38 @@
 
+# 基于plink 1.9的使用说明和注意事项
+
+# 1. --keep-allele-order 使用plink软件都要加上，特别是进行SNP效应估计时，不加可能会导致A1 A2位置的变化
+
+# 2. vcf 转 ped/map
+plink --vcf data.vcf --recode --out data
+
+# 3. ped/map 转 vcf
+plink --file data --export vcf --out data
+
+# 4. 质控、填充
+plink --file data --maf 0.01 --geno 0.1 --mind 0.1 --hwe 0 --make-bed --noweb --out data_QC
+
+# 5. 保留/删除一部分个体
+plink --bfile data  --keep keep.idlist.txt --make-bed --out data1
+plink --bfile data  --remove cut.idlist.txt --make-bed --out data1
+
+# 6. 提取/删掉一部分snp
+plink2 --bfile data --extract target.snplist.txt --allow-extra-chr --make-bed --out data1
+plink2 --bfile data --exclude target.snplist.txt --allow-extra-chr --make-bed --out data1
+
+# 7. 合并2个文件/多个文件
+plink --bfile data --bmerge data1.bed data1.bim data1.fam --make-bed --out data2
+plink --bfile data --merge-list allfiles.txt --make-bed --out data_all
+
+# 8. 强制安排特定的reference allele, 对生成正确的vcf文件、选配分析等至关重要，reference.txt包含"SNP ATL"，no header，一个SNP一行
+--reference-allele reference.txt
+
+# 9. 提取一条染色体的数据
+plink --bfile data --chr 1 --recode --out data.chr1
+
+# 10. 将一部分SNP设为缺失，详见说明书
+plink --file data --zero-cluster random.snplist.txt --within random.idlist.txt --make-bed
+
+# 11. 将plink的ped/map格式转成bimbam格式
+plink --file data --recode bimbam --out data
+

@@ -1,1 +1,42 @@
+# GCTA 软件部分功能的使用，其他功能请参考GCTA官网
+# website: https://yanglab.westlake.edu.cn/software/gcta/#Overview
+
+# 1. 构建亲缘关系矩阵（加性/显性）
+gcta64 --bfile data --make-grm --thread-num 100 --out GA
+gcta64 --bfile data --make-grm-d --thread-num 10 --out GD
+
+# 2. 估计方差组分
+# To obtain BLUP solutions for the genetic values of individuals
+gcta64 --reml --grm GA \
+--pheno pheno_noheader.txt \
+--mpheno 2 \
+--reml-alg 0 \
+--reml-pred-rand \
+--thread-num 10 \
+--out var
+# The genetic values(called "breeding value" in animal genetics) of all the individuals will be saved in a plain text file *.indi.blp.(第三列)
+
+gcta64 --reml --mgrm add_domi_grm.txt --pheno pheno.txt --out vars
+
+# 3. 使用GCTA的HE regression进行方差组分估计
+gcta64 --HEreg --grm GA \
+--pheno pheno_noheader.txt \
+--mpheno 2 \
+--thread-num 10 \
+--out var 
+
+# 4. To obtain BLUP solutions for the SNP effects
+gcta64 --bfile data \
+--blup-snp test.indi.blp \
+--out HT.class.rep11
+# The SNP BLUP effects can then be used to predict the genetic values (so called PRS) of individuals in an independent sample by the PLINK --score option.
+
+# 5. To compute the polygenic risk score (PRS) in an independent sample
+plink --bfile data
+--score *.snp.blp 1 2 3 sum
+
+
+
+
+
 

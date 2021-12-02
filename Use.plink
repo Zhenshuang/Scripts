@@ -19,7 +19,8 @@ plink --bfile data  --remove cut.idlist.txt --make-bed --out data1
 # 6. 提取/删掉一部分snp
 plink2 --bfile data --extract target.snplist.txt --allow-extra-chr --make-bed --out data1
 plink2 --bfile data --exclude target.snplist.txt --allow-extra-chr --make-bed --out data1
-
+ --range # 可以提取一个范围内的SNP，*txt文件需要3列，chr pos1 pos2
+ 
 # 7. 合并2个文件/多个文件
 plink --bfile data --bmerge data1.bed data1.bim data1.fam --make-bed --out data2
 plink --bfile data --merge-list allfiles.txt --make-bed --out data_all
